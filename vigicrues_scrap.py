@@ -5,6 +5,7 @@ import datetime #for datetime parsing
 import os #for seeking in file
 import struct #for serialization
 import time #for datetime serialization
+import json
 
 def parse_values(t):
     i = t.find('<map name="__mapname')
@@ -58,7 +59,9 @@ def process(station_id):
     values = parse_values(t)
     save_values(station_id,values)
 
-# siagne loup esteron vesubie tinee var
-#Y553403001 Y551404001   Y561501001 Y561503001   Y642401001 Y643401001   Y633404001   Y622401001 Y623402001  Y600203001 Y604201001 Y612201001 Y644202001 Y644201001
-for station_id in ('Y553403001','Y551404001','Y561501001','Y561503001','Y642401001','Y643401001','Y633404001','Y622401001','Y623402001','Y600203001','Y604201001','Y612201001','Y644202001','Y644201001'):
-    process(station_id)
+if __name__=='__main__':
+    f=open('viewer/stations.json','r')
+    stations = json.load(f)
+    f.close()
+    for station in stations:
+        process(station['id'])

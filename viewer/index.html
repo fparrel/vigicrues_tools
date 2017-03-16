@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<head></head>
+<body>
+<div id="stations">
+</div>
+</body>
+<script>
+var request = new XMLHttpRequest();
+request.open("GET", "stations.json", false);
+request.send(null);
+var stations=JSON.parse(request.responseText);
+var i;
+var html='<ul>';
+for(i=0;i<stations.length;i++) {
+    html += '<li><a href="view.html?station_id='+stations[i].id+'">'+stations[i].name+'</a></li>';
+}
+html+='</ul>';
+document.getElementById("stations").innerHTML = html;
+</script>
+</html>

@@ -5,3 +5,6 @@ __pycache__/
 
 # data files
 *.dat
+
+# csv files
+*.csv
