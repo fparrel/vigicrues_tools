@@ -40,3 +40,4 @@ if __name__=='__main__':
     f.close()
     for station in stations:
         dat2csv(station['id'],datetime.date.today())
+        dat2csv('%s-q'%station['id'],datetime.date.today())
