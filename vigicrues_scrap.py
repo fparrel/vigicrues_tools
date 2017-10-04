@@ -59,9 +59,13 @@ def process(station_id):
     t = r.text.encode(r.encoding)
     values = parse_values(t)
     save_values(station_id,values)
+    r = requests.get('http://www.vigicrues.gouv.fr/niveau3.php?CdEntVigiCru=22&CdStationHydro=%(station_id)s&typegraphe=q'%{'station_id':station_id})
+    t = r.text.encode(r.encoding)
+    values = parse_values(t)
+    save_values('%s-q'%station_id,values)
 
 if __name__=='__main__':
-    f=open('viewer/stations.json','r')
+    f=open('stations.json','r')
     stations = json.load(f)
     f.close()
     for station in stations:
