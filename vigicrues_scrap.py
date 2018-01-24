@@ -16,7 +16,7 @@ def save_values(station_id,values):
     value_size = struct.calcsize(serialisation)
 
     # Open the file for appending, create new file is needed. 'b' (binary) flag is needed on windows
-    f=open('%s.dat'%station_id,'a+b')
+    f=open('data/%s.dat'%station_id,'a+b')
 
     # Seek to the end (it seems that a+b opening do not seek to the end)
     f.seek(0,os.SEEK_END)
