@@ -8,7 +8,11 @@ serialisation='<Lf'
 value_size = struct.calcsize(serialisation)
 
 def dat2csv(station_id,min_date,nb_min=15):
-    fdat=open('%s.dat'%station_id,'rb')
+    try:
+        fdat=open('%s.dat'%station_id,'rb')
+    except:
+        print 'Warning: Cannot open %s'%station_id
+        return
     fcsvfull=open('viewer/%s.csv'%station_id,'w')
     fcsvfull.write('datetime,value\n')
     fcsvlast=open('viewer/%s-last.csv'%station_id,'w')
@@ -35,7 +39,7 @@ def dat2csv(station_id,min_date,nb_min=15):
     fdat.close()
 
 if __name__=='__main__':
-    f=open('viewer/stations.json','r')
+    f=open('stations.json','r')
     stations = json.load(f)
     f.close()
     for station in stations:
