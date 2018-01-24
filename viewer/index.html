@@ -13,9 +13,18 @@ request.send(null);
 var stations=JSON.parse(request.responseText);
 var i;
 var html='<ul>';
+var rivers={};
 for(i=0;i<stations.length;i++) {
-    html += '<li><a href="view.html?station_id='+stations[i].id+'">'+stations[i].name+' (Hauteur)</a></li>';
-    html += '<li><a href="view.html?station_id='+stations[i].id+'-q">'+stations[i].name+' (Débit)</a></li>';
+    contents = '<li><a href="view.html?station_id='+stations[i].id+'">'+stations[i].name+' (Hauteur)</a></li>'
+             + '<li><a href="view.html?station_id='+stations[i].id+'-q">'+stations[i].name+' (Débit)</a></li>';
+    if (typeof(rivers[stations[i].river])==='undefined') {
+        rivers[stations[i].river] = contents;
+    } else {
+        rivers[stations[i].river] += contents;
+    }
+}
+for(river in rivers) {
+    html += '<li>' + river + '<ul>' + rivers[river] + '</ul></li>';
 }
 html+='</ul>';
 document.getElementById("stations").innerHTML = html;

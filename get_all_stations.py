@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import requests #for http requests
 import re
 import json
@@ -26,14 +28,17 @@ def main():
     t = r.text.encode(r.encoding)
     bassins = map(lambda hrefurl: int(hrefurl[len(BASSINPREFIX):]),list(set(parse_page(t,BASSINPREFIX))))
     for bassin in bassins:
-        print bassin
+        print 'Bassin %s' % bassin
         r = requests.get('http://www.vigicrues.gouv.fr/niv2-bassin.php?CdEntVigiCru=%s'%bassin)
         t = r.text.encode(r.encoding)
-        stations_of_bassin = list(set(list(map(extract_stationid,parse_page(t,STATIONPREFIX)))))
-        for station in stations_of_bassin:
-            r = requests.get('http://www.vigicrues.gouv.fr/services/station.json/index.php?CdStationHydro=%s'%station)
-            all_stations.append({'id':station,'river':r.json()['LbCoursEau'].encode(r.encoding),'name':r.json()['LbStationHydro'].encode(r.encoding)})
-    json.dump(all_stations,open('stations.json','w'))
+        all_stations += list(map(extract_stationid,parse_page(t,STATIONPREFIX)))
+    all_stations = list(set(all_stations))
+    all_stations_obj = []
+    for station in all_stations:
+        r = requests.get('http://www.vigicrues.gouv.fr/services/station.json/index.php?CdStationHydro=%s'%station)
+        all_stations_obj.append({'id':station,'river':r.json()['LbCoursEau'].encode(r.encoding),'name':r.json()['LbStationHydro'].encode(r.encoding)})
+    json.dump(all_stations_obj,open('stations.json','w'))
 
 if __name__=='__main__':
     main()
+
