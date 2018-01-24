@@ -62,7 +62,7 @@ def process(station_id):
         save_values('%s-q'%station_id,values) 
 
 if __name__=='__main__':
-    f=open('viewer/stations.json','r')
+    f=open('stations.json','r')
     stations = json.load(f)
     f.close()
     for station in stations:
