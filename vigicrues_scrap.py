@@ -8,19 +8,6 @@ import struct #for serialization
 import time #for datetime serialization
 import json
 
-def parse_values(t):
-    i = t.find('<map name="__mapname')
-    while i!=-1:
-        j = t.find('title="',i)
-        if j!=-1:
-            k = t.find('alt="',j)
-            if k!=-1:
-                v = map(str.strip,t[j+6:k].strip('" ').split('Valeur mesurée ='))
-                yield datetime.datetime.strptime(v[0],'%d/%m/%Y %H:%M'),float(v[1])
-        else:
-            k=-1
-        i = k
-
 def save_values(station_id,values):
     # Be low tech: I could have put the data in a db like MongoDB. But this code lead to the minimal disk access needed
 
@@ -41,6 +28,8 @@ def save_values(station_id,values):
         f.seek(-value_size,os.SEEK_END)
         last_value = struct.unpack(serialisation,f.read(value_size))
         last_datetime = datetime.datetime.fromtimestamp(last_value[0])
+        print 'last from .dat=%s'%last_datetime
+        print 'from vigicrues: %s - %s'%(values[0][0],values[-1][0])
         # Discard values from scraping that are older than last value from file
         for dt,v in values:
             if last_datetime<dt:
@@ -55,10 +44,22 @@ def save_values(station_id,values):
     f.close()
 
 def process(station_id):
-    r = requests.get('http://www.vigicrues.gouv.fr/niveau3.php?CdEntVigiCru=22&CdStationHydro=%(station_id)s'%{'station_id':station_id})
+    url = 'https://www.vigicrues.gouv.fr/services/observations.json/index.php?CdStationHydro=%(station_id)s&GrdSerie=H&FormatSortie=simple'%{'station_id':station_id}
+    print url
+    r = requests.get(url)
     t = r.text.encode(r.encoding)
-    values = parse_values(t)
-    save_values(station_id,values)
+    values = map(lambda timestampvalue: [datetime.datetime.fromtimestamp(timestampvalue[0]/1000),timestampvalue[1]],json.loads(t)['Serie']['ObssHydro'])
+    print station_id,'H',len(values)
+    if len(values)>0:
+        save_values(station_id,values)
+    url = 'https://www.vigicrues.gouv.fr/services/observations.json/index.php?CdStationHydro=%(station_id)s&GrdSerie=Q&FormatSortie=simple'%{'station_id':station_id}
+    print url
+    r = requests.get(url)
+    t = r.text.encode(r.encoding)
+    values = map(lambda timestampvalue: [datetime.datetime.fromtimestamp(timestampvalue[0]/1000),timestampvalue[1]],json.loads(t)['Serie']['ObssHydro'])
+    print station_id,'Q',len(values)
+    if len(values)>0:
+        save_values('%s-q'%station_id,values) 
 
 if __name__=='__main__':
     f=open('viewer/stations.json','r')
