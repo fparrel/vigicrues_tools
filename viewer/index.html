@@ -23,8 +23,12 @@ for(i=0;i<stations.length;i++) {
         rivers[stations[i].river] += contents;
     }
 }
-for(river in rivers) {
-    html += '<li>' + river + '<ul>' + rivers[river] + '</ul></li>';
+var rivers_sorted = Object.keys(rivers);
+rivers_sorted.sort(function (a, b) {
+    return a.toLowerCase().localeCompare(b.toLowerCase());
+});
+for(var i=0;i<rivers_sorted.length;i++) {
+    html += '<li>' + rivers_sorted[i] + ': <ul>' + rivers[rivers_sorted[i]] + '</ul></li>';
 }
 html+='</ul>';
 document.getElementById("stations").innerHTML = html;
