@@ -70,9 +70,12 @@ var context = svg.append("g")
     .attr("class", "context")
     .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 
-var station_id = window.location.href.match(/^[^\?]*\?station_id=(.*)/)[1];
+//var station_id = window.location.href.match(/^[^\?]*\?station_id=(.*)/)[1];
+var req = window.location.href.match(/^[^\?]*\?domain=([^&]*)&station_id=(.*)/);
+var station_id = req[2];
+var domain = req[1];
 
-d3.csv(station_id+".csv", type, function(error, data) {
+d3.csv(domain+"/"+station_id+".csv", type, function(error, data) {
   if (error) throw error;
 
   x.domain(d3.extent(data, function(d) { return d.datetime; }));
