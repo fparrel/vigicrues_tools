@@ -4,17 +4,19 @@ import struct
 import json
 import datetime
 import os
+import sys
 
 serialisation='<Lf'
 value_size = struct.calcsize(serialisation)
 
-def dat2csv(station_id,min_date,do_last=False,nb_min=15):
+def dat2csv(domain,station_id,min_date,do_last=False,nb_min=15):
 
     # Open the .dat file, ignore if not found
+    fname = 'data/%s/%s.dat'%(domain,station_id)
     try:
-        fdat = open('data/%s.dat'%station_id,'rb')
+        fdat = open(fname,'rb')
     except:
-        print 'Warning: Cannot open %s'%station_id
+        print 'Warning: Cannot open %s'%fname
         return
 
     # Get last timestamp from csv file
@@ -30,15 +32,15 @@ def dat2csv(station_id,min_date,do_last=False,nb_min=15):
 
     if last_from_csv==0:
         # csv file doesn't exist, build it from scratch
-        fcsvfull = open('viewer/%s.csv'%station_id,'w')
+        fcsvfull = open('viewer/%s/%s.csv'%(domain,station_id),'w')
         fcsvfull.write('datetime,value\n')
     else:
         # csv file exists, just append
-        fcsvfull=open('viewer/%s.csv'%station_id,'a')
+        fcsvfull = open('viewer/%s/%s.csv'%(domain,station_id),'a')
 
     # open '-last.csv' file if asked
     if do_last:
-        fcsvlast = open('viewer/%s-last.csv'%station_id,'w')
+        fcsvlast = open('viewer/%s/%s-last.csv'%(domain,station_id),'w')
         fcsvlast.write('datetime,value\n')
 
     nb_on_last = 0
@@ -79,10 +81,24 @@ def dat2csv(station_id,min_date,do_last=False,nb_min=15):
     fdat.close()
 
 if __name__=='__main__':
-    f = open('stations.json','r')
-    stations = json.load(f)
-    f.close()
-    for station in stations:
-        dat2csv(station['id'],datetime.date.today())
-        dat2csv('%s-q'%station['id'],datetime.date.today())
+    if len(sys.argv)>1:
+        domains = sys.argv[1:]
+    else:
+        domains = ['vigicrues','rdbrmc']
+    if 'vigicrues' in domains:
+        f = open('stations.json','r')
+        stations = json.load(f)
+        f.close()
+        for station in stations:
+            dat2csv('vigicrues',station['id'],datetime.date.today())
+            dat2csv('vigicrues','%s-q'%station['id'],datetime.date.today())
+    if 'rdbrmc' in domains:
+        f = open('stations_rdbrmc.json','r')
+        stations2 = json.load(f)
+        f.close()
+        ids = set(map(lambda s:s['id'],stations2))
+        for id in ids:
+            dat2csv('rdbrmc','pluie_%s'%id,datetime.date.today())
+            dat2csv('rdbrmc','debit_%s'%id,datetime.date.today())
+            dat2csv('rdbrmc','cote_%s'%id,datetime.date.today())
 
