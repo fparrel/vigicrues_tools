@@ -4,6 +4,12 @@ import datetime
 import os
 import time
 
+def mkdirp(path):
+    try:
+        os.makedirs(path)
+    except:
+        pass
+
 def get_lastupdatetime(domain,station_id):
 
     # So here is how we will serialize: an unsigned integer representing the timestamp, and a float representing the value
@@ -39,6 +45,7 @@ def save_values(domain,station_id,values):
     value_size = struct.calcsize(serialisation)
 
     # Open the file for appending, create new file is needed. 'b' (binary) flag is needed on windows
+    mkdirp('data/%s'%(domain))
     f=open('data/%s/%s.dat'%(domain,station_id),'a+b')
 
     # Seek to the end (it seems that a+b opening do not seek to the end)
@@ -62,7 +69,7 @@ def save_values(domain,station_id,values):
     # Seek back to the end: even if we did seek(-value_size) and read(value_size), seeking is mandatory on windows bettween read and write
     f.seek(0,os.SEEK_END)
     # Append data to the file
-    buffer = ''.join(map(lambda v: struct.pack(serialisation,time.mktime(v[0].timetuple()),v[1]),list(values)[minidx:]))
-    f.write(buffer)
+    buf = ''.join(map(lambda v: struct.pack(serialisation,time.mktime(v[0].timetuple()),v[1]),list(values)[minidx:]))
+    f.write(buf)
     f.close()
 
