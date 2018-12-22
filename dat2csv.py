@@ -5,6 +5,7 @@ import json
 import datetime
 import os
 import sys
+from serialize import mkdirp
 
 serialisation='<Lf'
 value_size = struct.calcsize(serialisation)
@@ -101,4 +102,18 @@ if __name__=='__main__':
             dat2csv('rdbrmc','pluie_%s'%id,datetime.date.today())
             dat2csv('rdbrmc','debit_%s'%id,datetime.date.today())
             dat2csv('rdbrmc','cote_%s'%id,datetime.date.today())
+    if 'chtajo' in domains:
+        f = open('stations_chtajo.json','r')
+        stations_chtajo = json.load(f)
+        f.close()
+        mkdirp('viewer/chtajo')
+        for s in stations_chtajo:
+            dat2csv('chtajo','debit_%s'%s['id'],datetime.date.today())
+    if 'chduero' in domains:
+        f = open('stations_chduero.json','r')
+        stations_chduero = json.load(f)
+        f.close()
+        mkdirp('viewer/chduero')
+        for s in stations_chduero:
+            dat2csv('chduero','debit_%s'%s['id'],datetime.date.today())
 

@@ -14,6 +14,7 @@ var stations=JSON.parse(request.responseText);
 var i;
 var html='<ul>';
 var rivers={};
+
 var domain='vigicrues';
 for(i=0;i<stations.length;i++) {
     contents = '<li><a href="view.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].name+' (Hauteur)</a></li>'
@@ -24,6 +25,7 @@ for(i=0;i<stations.length;i++) {
         rivers[stations[i].river] += contents;
     }
 }
+
 domain='rdbrmc';
 request.open("GET", "stations_rdbrmc.json", false);
 request.send(null);
@@ -35,6 +37,32 @@ for(i=0;i<stations.length;i++) {
         contents = '<li><a href="view.html?domain='+domain+'&station_id=cote_'+stations[i].id+'">'+stations[i].name+' (Cote)</a></li>'
                  + '<li><a href="view.html?domain='+domain+'&station_id=debit_'+stations[i].id+'">'+stations[i].name+' (Debit)</a></li>';
     }
+    if (typeof(rivers[stations[i].river])==='undefined') {
+        rivers[stations[i].river] = contents;
+    } else {
+        rivers[stations[i].river] += contents;
+    }
+}
+
+domain='chtajo';
+request.open("GET", "stations_"+domain+".json", false);
+request.send(null);
+stations=JSON.parse(request.responseText);
+for(i=0;i<stations.length;i++) {
+    contents = '<li><a href="view.html?domain='+domain+'&station_id=debit_'+stations[i].id+'">'+stations[i].name+' (Debit)</a></li>';
+    if (typeof(rivers[stations[i].river])==='undefined') {
+        rivers[stations[i].river] = contents;
+    } else {
+        rivers[stations[i].river] += contents;
+    }
+}
+
+domain='chduero';
+request.open("GET", "stations_"+domain+".json", false);
+request.send(null);
+stations=JSON.parse(request.responseText);
+for(i=0;i<stations.length;i++) {
+    contents = '<li><a href="view.html?domain='+domain+'&station_id=debit_'+stations[i].id+'">'+stations[i].station+' (Debit)</a></li>';
     if (typeof(rivers[stations[i].river])==='undefined') {
         rivers[stations[i].river] = contents;
     } else {
