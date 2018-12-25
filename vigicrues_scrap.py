@@ -35,7 +35,7 @@ if __name__=='__main__':
     elif len(sys.argv) == 2:
         process(sys.argv[1])
     else:
-        f = open('stations.json','r')
+        f = open('stations_vigicrues.json','r')
         stations = json.load(f)
         f.close()
         for station in stations:
