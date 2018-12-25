@@ -37,7 +37,7 @@ def main():
     for station in all_stations:
         r = requests.get('http://www.vigicrues.gouv.fr/services/station.json/index.php?CdStationHydro=%s'%station)
         all_stations_obj.append({'id':station,'river':r.json()['LbCoursEau'].encode(r.encoding),'name':r.json()['LbStationHydro'].encode(r.encoding)})
-    json.dump(all_stations_obj,open('stations.json','w'))
+    json.dump(all_stations_obj,open('stations_vigicrues.json','w'))
 
 if __name__=='__main__':
     main()
