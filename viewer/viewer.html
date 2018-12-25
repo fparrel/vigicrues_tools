@@ -1,0 +1,57 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>River flow visualizer</title>
+  <link href="nv.d3.css" rel="stylesheet">
+  <script src="d3.v3.min.js"></script>
+  <script src="nv.d3.min.js"></script>
+</head>
+<body>
+<h1>m3/s or m against time</h1>
+<div id='chart'>
+  <svg style='height:800px;width:100%;'> </svg>
+</div>
+<script>
+
+var req = window.location.href.match(/^[^\?]*\?domain=([^&]*)&station_id=(.*)/);
+var station_id = req[2];
+var domain = req[1];
+
+d3.csv(domain + '/' + station_id + '.csv', function(error, data) {
+  dataset = [{key:'data',values:data.map(function(d) { return {x:new Date(d.datetime*1000), y:+d.value} })}];
+
+  nv.addGraph(function() {
+    var chart = nv.models.lineWithFocusChart();
+
+    chart.xAxis
+        .tickFormat(function(d) { 
+          return d3.time.format('%x')(new Date(d)) 
+    });
+
+    chart.x2Axis
+	.tickFormat(function(d) {
+          return d3.time.format('%x')(new Date(d))
+    });
+
+    chart.yAxis
+        .tickFormat(d3.format(',.2f'));
+
+    chart.y2Axis
+        .tickFormat(d3.format(',.2f'));
+
+    d3.select('#chart svg')
+        .datum(dataset)
+//        .transition().duration(500)
+        .call(chart);  
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+});
+
+</script>
+</body>
+</html>
+
