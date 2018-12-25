@@ -42,7 +42,7 @@ def main():
     stations = json.load(f)
     f.close()
     for station in stations:
-        print station['station']
+        print station['station'].encode('utf8')
         process(station['id'])
 
 if __name__=='__main__':

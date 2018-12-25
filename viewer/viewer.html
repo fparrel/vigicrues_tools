@@ -17,8 +17,24 @@ var req = window.location.href.match(/^[^\?]*\?domain=([^&]*)&station_id=(.*)/);
 var station_id = req[2];
 var domain = req[1];
 
-d3.csv(domain + '/' + station_id + '.csv', function(error, data) {
-  dataset = [{key:'data',values:data.map(function(d) { return {x:new Date(d.datetime*1000), y:+d.value} })}];
+var xhr = new XMLHttpRequest();
+xhr.open('GET', 'data/'+domain+'/'+station_id+'.dat', true);
+xhr.responseType = 'arraybuffer';
+xhr.send(null);
+
+xhr.onload = function(oEvent) {
+
+  var arrayBuffer = xhr.response;
+  var dv = new DataView(arrayBuffer);
+  var i;
+  var data=[];
+  for(i=0;i<arrayBuffer.byteLength;i+=8) {
+    data.push({x:dv.getUint32(i,true)*1000,y:dv.getFloat32(i+4,true)});
+  }
+  // cf. ../serialize.py : little endian: uint32 timestamp in seconds + float32
+
+
+  dataset = [{key:'data',values:data}];
 
   nv.addGraph(function() {
     var chart = nv.models.lineWithFocusChart();
@@ -49,7 +65,7 @@ d3.csv(domain + '/' + station_id + '.csv', function(error, data) {
     return chart;
   });
 
-});
+}
 
 </script>
 </body>
