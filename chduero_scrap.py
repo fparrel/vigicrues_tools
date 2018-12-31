@@ -49,8 +49,6 @@ def main():
         if station.has_key('direct_url'):
             if station['direct_url'] != direct_url:
                 print 'direct_url different!'
-            else:
-                print 'same direct_url'
         else:
             station['direct_url'] = direct_url
     f = open('stations_chduero.json','w')
