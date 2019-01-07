@@ -4,12 +4,9 @@ __pycache__/
 *$py.class
 
 # data files
-data/*.dat
-
-# csv files
-viewer/*.csv
+data/*/*.dat
 
 # Generated stations file
-stations.json
+stations_*.json
 viewer/stations.json
 
