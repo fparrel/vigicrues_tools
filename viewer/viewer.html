@@ -7,7 +7,6 @@
   <script src="nv.d3.min.js"></script>
 </head>
 <body>
-<h1>m3/s or m against time</h1>
 <div id='chart'>
   <svg style='height:800px;width:100%;'> </svg>
 </div>
@@ -41,12 +40,12 @@ xhr.onload = function(oEvent) {
 
     chart.xAxis
         .tickFormat(function(d) { 
-          return d3.time.format('%x')(new Date(d)) 
+          return d3.time.format('%Y/%m/%d %Hh')(new Date(d)) 
     });
 
     chart.x2Axis
 	.tickFormat(function(d) {
-          return d3.time.format('%x')(new Date(d))
+          return d3.time.format('%Y/%m')(new Date(d))
     });
 
     chart.yAxis
