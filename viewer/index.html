@@ -70,6 +70,19 @@ for(i=0;i<stations.length;i++) {
     }
 }
 
+domain='chebro';
+request.open("GET", "stations_"+domain+".json", false);
+request.send(null);
+stations=JSON.parse(request.responseText);
+for(i=0;i<stations.length;i++) {
+    contents = '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].desc+' (Debit)</a></li>';
+    if (typeof(rivers[stations[i].river])==='undefined') {
+        rivers[stations[i].river] = contents;
+    } else {
+        rivers[stations[i].river] += contents;
+    }
+}
+
 var rivers_sorted = Object.keys(rivers);
 rivers_sorted.sort(function (a, b) {
     return a.toLowerCase().localeCompare(b.toLowerCase());
