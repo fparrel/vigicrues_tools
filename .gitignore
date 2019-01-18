@@ -8,6 +8,8 @@ data/*/*.dat
 
 # Generated stations file
 stations_*.json
-viewer/stations.json
 stations.geojson
+
+# log files
+*.log
 
