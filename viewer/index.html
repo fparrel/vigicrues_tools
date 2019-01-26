@@ -88,7 +88,7 @@ request.open("GET", "stations_"+domain+".json", false);
 request.send(null);
 stations=JSON.parse(request.responseText);
 for(i=0;i<stations.length;i++) {
-    contents = '<li><a href="viewer.html?domain='+domain+'&station_id='+station[i].type+'_'+stations[i].id+'">'+stations[i].name+' </a></li>';
+    contents = '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].type+'_'+stations[i].id+'">'+stations[i].name+' </a></li>';
     if (typeof(rivers[stations[i].river])==='undefined') {
         rivers[stations[i].river] = contents;
     } else {
