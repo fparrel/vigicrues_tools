@@ -15,11 +15,10 @@ def main():
     stations = getStations()
     for station in stations:
         print station['id']
-        ps = 24*60/5
+        ps = 24*60/5+3
         url = 'http://saih.chj.es/chj/saih/stats/datosGrafico?v=%s&t=ultimos5minutales&%d=30'%(station['var'],ps)
         r = requests.get(url)
         values = list(filter(lambda dv:dv[1]!=None,map(lambda dv:(datetime.datetime.strptime(dv[0],'%d/%m/%Y %H:%M'),dv[1]),r.json()[1])))
-        print values
         if len(values)>0:
             save_values('chj',station['id'],values)
 
