@@ -4,7 +4,7 @@
 import requests
 import xml.etree.ElementTree as ET
 import datetime
-from serialize import save_values, get_lastupdatetime
+from serialize import save_values
 import json
 
 def get_last_values(code_station):
@@ -30,7 +30,7 @@ def process(code_station):
 
 def main():
     #process('AR42FICT98')
-    f=open('stations_chtajo.json','r')
+    f = open('stations_chtajo.json','r')
     stations = json.load(f)
     f.close()
     for station in stations:
@@ -39,4 +39,3 @@ def main():
 
 if __name__=='__main__':
     main()
-
