@@ -35,7 +35,7 @@ for(i=0;i<stations.length;i++) {
         contents = '<li><a href="viewer.html?domain='+domain+'&station_id=pluie_'+stations[i].id+'">'+stations[i].name+' (Pluie)</a></li>';
     } else {
         contents = '<li><a href="viewer.html?domain='+domain+'&station_id=cote_'+stations[i].id+'">'+stations[i].name+' (Cote)</a></li>'
-                 + '<li><a href="viewer.html?domain='+domain+'&station_id=debit_'+stations[i].id+'">'+stations[i].name+' (Debit)</a></li>';
+                 + '<li><a href="viewer.html?domain='+domain+'&station_id=debit_'+stations[i].id+'">'+stations[i].name+' (Débit)</a></li>';
     }
     if (typeof(rivers[stations[i].river])==='undefined') {
         rivers[stations[i].river] = contents;
@@ -49,7 +49,7 @@ request.open("GET", "stations_"+domain+".json", false);
 request.send(null);
 stations=JSON.parse(request.responseText);
 for(i=0;i<stations.length;i++) {
-    contents = '<li><a href="viewer.html?domain='+domain+'&station_id=debit_'+stations[i].id+'">'+stations[i].name+' (Debit)</a></li>';
+    contents = '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].name+' (Débit)</a></li>';
     if (typeof(rivers[stations[i].river])==='undefined') {
         rivers[stations[i].river] = contents;
     } else {
@@ -62,7 +62,7 @@ request.open("GET", "stations_"+domain+".json", false);
 request.send(null);
 stations=JSON.parse(request.responseText);
 for(i=0;i<stations.length;i++) {
-    contents = '<li><a href="viewer.html?domain='+domain+'&station_id=debit_'+stations[i].id+'">'+stations[i].station+' (Debit)</a></li>';
+    contents = '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].station+' (Débit)</a></li>';
     if (typeof(rivers[stations[i].river])==='undefined') {
         rivers[stations[i].river] = contents;
     } else {
