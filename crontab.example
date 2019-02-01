@@ -1,0 +1,12 @@
+#m h dom mon dow cmd
+30 4 * * * bash -c "cd ~/vigicrues_tools && ./chj_scrap.py > chj.log 2>&1"
+40 4 * * * bash -c "cd ~/vigicrues_tools && ./chgalicia_scrap.py > chgalicia.log 2>&1"
+50 4 * * * bash -c "cd ~/vigicrues_tools && ./chmino_scrap.py > chmino.log 2>&1"
+0 5 * * * bash -c "cd ~/vigicrues_tools && ./chcantabrico_scrap.py > chcantabrico.log 2>&1"
+10 5 * * * bash -c "cd ~/vigicrues_tools && ./chguadiana_scrap.py > chguadiana.log 2>&1"
+20 5 * * * bash -c "cd ~/vigicrues_tools && ./chebro_scrap.py > chebro.log 2>&1"
+32 5 * * * bash -c "cd ~/vigicrues_tools && ./chduero_scrap.py > chduero.log 2>&1"
+53 5 * * * bash -c "cd ~/vigicrues_tools && ./chtajo_scrap.py > chtajo.log 2>&1"
+15 6 * * * bash -c "cd ~/vigicrues_tools && ./vigicrues_scrap.py > vigicrues.log 2>&1"
+0,5,10,15,20,25,30,35,40,45,50,55 * * * * bash -c "cd ~/vigicrues_tools && ./rdbrmc_scrap.py > rdbrmc.log 2>&1"
+
