@@ -17,11 +17,11 @@ def main():
     fichas = map(lambda e:patficha.findall(e.get('href'))[0],tree.xpath('//*[starts-with(@href,"index.php?url=/datos/ficha")]'))
     patgrafica = re.compile(r'index\.php\?url=/datos/graficas/tag:([A-Z_0-9]+)')
     graficas = map(lambda e:patgrafica.findall(e.get('href'))[0],tree.xpath('//*[starts-with(@href,"index.php?url=/datos/graficas")]'))
-    print graficas
+    print(graficas)
     stations = []
 
     for ficha in fichas:
-        print ficha
+        print(ficha)
         station_id = ficha[0]
         rf = requests.get('http://saih.chminosil.es/index.php?url=/datos/ficha/estacion:%s/area%s'%ficha,cookies={'lang':'es'})
         htmlf = rf.text.encode(rf.encoding)
@@ -39,7 +39,7 @@ def main():
             if grafica.startswith(station_id):
                 tags.append(grafica)
         station = {'lat':lat,'lon':lon,'id':station_id,'name':name,'river':river,'tags':tags}        
-        print station
+        print(station)
         stations.append(station)
 
     json.dump(stations, open('stations_chmino.json','w'))

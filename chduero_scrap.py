@@ -14,10 +14,10 @@ def parsePoint(p):
             v = float(s[1])
         return datetime.datetime.strptime(s[0][4:-3],"%d/%m/%Y %H:%M"),v
     except:
-        print 'Could not parse:', p
+        print('Could not parse: "%s"' % p)
     return None
 
-def get_data(station_id):
+def getData(station_id):
     r = requests.get('http://www.saihduero.es/ficha-risr?r=%s' % station_id)
     t = r.text.encode(r.encoding)
     i = t.find('<td>Caudal</td>')
@@ -33,22 +33,26 @@ def get_data(station_id):
     return filter(lambda x: x!=None, map(parsePoint, d.split('},\n'))), direct_url
 
 def process(station_id):
-    values_gen, direct_url = get_data(station_id)
+    values_gen, direct_url = getData(station_id)
     values = list(values_gen)
     if len(values) > 0:
         save_values('chduero', station_id, values)
     return direct_url
 
-def main():
+def loadStations():
     f = open('stations_chduero.json','r')
     stations = json.load(f)
     f.close()
+    return stations
+
+def main():
+    stations = loadStations()
     for station in stations:
         print station['station'].encode('utf8')
         direct_url = process(station['id'])
         if station.has_key('direct_url'):
             if station['direct_url'] != direct_url:
-                print 'direct_url different!'
+                print('Warning: direct_url different!')
         else:
             station['direct_url'] = direct_url
     f = open('stations_chduero.json','w')
@@ -57,4 +61,3 @@ def main():
 
 if __name__=='__main__':
     main()
-

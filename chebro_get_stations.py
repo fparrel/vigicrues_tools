@@ -24,7 +24,7 @@ def parseStation(html):
   idx = html.find('<a href="javascript:cambiarCapa(1,4,\'ficha\');" >')
   idx2 = html.find('</a>', idx)
   desc = html[idx+len('<a href="javascript:cambiarCapa(1,4,\'ficha\');" >'):idx2]
-  print desc
+  print(desc)
   idx = html.find('<td class="celdacn">Z</td>',idx2)
   idx = html.find('<td class="celdac" colspan="2">',idx)
   idx2 = html.find('</td>',idx)
@@ -42,14 +42,14 @@ def parseStation(html):
   idx = html.find('<td class="celdal" colspan="5">',idx)
   idx2 = html.find('</td>',idx)
   river = html[idx+len('<td class="celdal" colspan="5">'):idx2]
-  print river
+  print(river)
   idx = html.find('<td class="celdal">CAUDAL',idx2)
   idx = html.find('index.php?url=/datos/graficas/tag:', idx)
   idx2 = html.find('"', idx)
   tag = html[idx+len('index.php?url=/datos/graficas/tag:'):idx2]
   if (len(tag)>100):
     tag = ''  
-  print tag
+  print(tag)
   return desc,h,x,y,z,river,tag
 
 def main():
@@ -59,7 +59,7 @@ def main():
   stations = []
   for v,t in values:
     station_id,zone,station_type = v.split('|')
-    print station_id
+    print(station_id)
     name = ' '.join(t.replace('&nbsp;',' ').split()[1:])
     desc,h,x,y,z,river,tag = parseStation(getStationDataHtml(station_id))
     lat,lon = utm.to_latlon(x,y,h,'T')
@@ -68,4 +68,3 @@ def main():
 
 if __name__=='__main__':
   main()
-

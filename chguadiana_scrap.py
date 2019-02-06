@@ -6,7 +6,7 @@ from lxml import etree
 import datetime
 from serialize import save_values
 
-def getStations():
+def loadStations():
     f = open('stations_chguadiana.json', 'r')
     stations = json.load(f)
     f.close()
@@ -31,9 +31,13 @@ def getData(station):
             ths = tr.xpath('th')
             columns = map(lambda th:th.text,ths)
 
-for station in getStations():
-    print station['id']
-    values = list(getData(station))
-    if len(values)>0:
-        values.sort(key=lambda x:x[0]) # values must be sorted for save_values algorithm
-        save_values('chguadiana','%(type)s_%(id)s'%station,values)
+def main():
+    for station in loadStations():
+        print(station['id'])
+        values = list(getData(station))
+        if len(values)>0:
+            values.sort(key=lambda x:x[0]) # values must be sorted for save_values algorithm
+            save_values('chguadiana','%(type)s_%(id)s'%station,values)
+
+if __name__=='__main__':
+    main()
