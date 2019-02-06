@@ -7,18 +7,14 @@
 </div>
 </body>
 <script>
-var request = new XMLHttpRequest();
-request.open("GET", "stations_vigicrues.json", false);
-request.send(null);
-var stations=JSON.parse(request.responseText);
-var i;
-var html='<ul>';
-var rivers={};
 
-var domain='vigicrues';
-for(i=0;i<stations.length;i++) {
-    contents = '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].name+' (Hauteur)</a></li>'
-             + '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'-q">'+stations[i].name+' (Débit)</a></li>';
+function getStations(domain) {
+    request.open("GET", "stations_"+domain+".json", false);
+    request.send(null);
+    return JSON.parse(request.responseText);
+}
+
+function addToRiver(station, contents) {
     if (typeof(rivers[stations[i].river])==='undefined') {
         rivers[stations[i].river] = contents;
     } else {
@@ -26,10 +22,21 @@ for(i=0;i<stations.length;i++) {
     }
 }
 
-domain='rdbrmc';
-request.open("GET", "stations_rdbrmc.json", false);
-request.send(null);
-var stations=JSON.parse(request.responseText);
+var request = new XMLHttpRequest();
+var i;
+var html = '<ul>';
+var rivers = {};
+
+var domain = 'vigicrues';
+var stations = getStations(domain);
+for(i=0;i<stations.length;i++) {
+    addToRiver(stations[i],
+              '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].name+' (Hauteur)</a></li>'
+            + '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'-q">'+stations[i].name+' (Débit)</a></li>');
+}
+
+domain = 'rdbrmc';
+stations = getStations(domain);
 for(i=0;i<stations.length;i++) {
     if (stations[i].type==='PLUVIO') {
         contents = '<li><a href="viewer.html?domain='+domain+'&station_id=pluie_'+stations[i].id+'">'+stations[i].name+' (Pluie)</a></li>';
@@ -37,118 +44,58 @@ for(i=0;i<stations.length;i++) {
         contents = '<li><a href="viewer.html?domain='+domain+'&station_id=cote_'+stations[i].id+'">'+stations[i].name+' (Cote)</a></li>'
                  + '<li><a href="viewer.html?domain='+domain+'&station_id=debit_'+stations[i].id+'">'+stations[i].name+' (Débit)</a></li>';
     }
-    if (typeof(rivers[stations[i].river])==='undefined') {
-        rivers[stations[i].river] = contents;
-    } else {
-        rivers[stations[i].river] += contents;
-    }
+    addToRiver(stations[i], contents);
 }
 
-domain='chtajo';
-request.open("GET", "stations_"+domain+".json", false);
-request.send(null);
-stations=JSON.parse(request.responseText);
+domain = 'chtajo';
+stations = getStations(domain);
 for(i=0;i<stations.length;i++) {
-    contents = '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].name+' (Débit)</a></li>';
-    if (typeof(rivers[stations[i].river])==='undefined') {
-        rivers[stations[i].river] = contents;
-    } else {
-        rivers[stations[i].river] += contents;
-    }
+    addToRiver(stations[i], '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].name+' (Débit)</a></li>');
 }
 
-domain='chduero';
-request.open("GET", "stations_"+domain+".json", false);
-request.send(null);
-stations=JSON.parse(request.responseText);
+domain = 'chduero';
+stations = getStations(domain);
 for(i=0;i<stations.length;i++) {
-    contents = '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].station+' (Débit)</a></li>';
-    if (typeof(rivers[stations[i].river])==='undefined') {
-        rivers[stations[i].river] = contents;
-    } else {
-        rivers[stations[i].river] += contents;
-    }
+    addToRiver(stations[i], '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].station+' (Débit)</a></li>');
 }
 
-domain='chebro';
-request.open("GET", "stations_"+domain+".json", false);
-request.send(null);
-stations=JSON.parse(request.responseText);
+domain = 'chebro';
+stations = getStations(domain);
 for(i=0;i<stations.length;i++) {
-    contents = '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].desc+' (Debit)</a></li>';
-    if (typeof(rivers[stations[i].river])==='undefined') {
-        rivers[stations[i].river] = contents;
-    } else {
-        rivers[stations[i].river] += contents;
-    }
+    addToRiver(stations[i], '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].desc+' (Debit)</a></li>');
 }
 
-domain='chguadiana';
-request.open("GET", "stations_"+domain+".json", false);
-request.send(null);
-stations=JSON.parse(request.responseText);
+domain = 'chguadiana';
+stations = getStations(domain);
 for(i=0;i<stations.length;i++) {
-    contents = '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].type+'_'+stations[i].id+'">'+stations[i].name+' </a></li>';
-    if (typeof(rivers[stations[i].river])==='undefined') {
-        rivers[stations[i].river] = contents;
-    } else {
-        rivers[stations[i].river] += contents;
-    }
+    addToRiver(stations[i], '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].type+'_'+stations[i].id+'">'+stations[i].name+' </a></li>');
 }
 
-domain='chcantabrico';
-request.open("GET", "stations_"+domain+".json", false);
-request.send(null);
-stations=JSON.parse(request.responseText);
+domain = 'chcantabrico';
+stations = getStations(domain);
 for(i=0;i<stations.length;i++) {
-    contents = '<li><a href="viewer.html?domain='+domain+'&station_id=nivel_'+stations[i].id+'">'+stations[i].name+' </a></li>';
-    if (typeof(rivers[stations[i].river])==='undefined') {
-        rivers[stations[i].river] = contents;
-    } else {
-        rivers[stations[i].river] += contents;
-    }
+    addToRiver(stations[i], '<li><a href="viewer.html?domain='+domain+'&station_id=nivel_'+stations[i].id+'">'+stations[i].name+' </a></li>');
 }
 
-domain='chmino';
-request.open("GET", "stations_"+domain+".json", false);
-request.send(null);
-stations=JSON.parse(request.responseText);
+domain = 'chmino';
+stations = getStations(domain);
 for(i=0;i<stations.length;i++) {
     var j;
     for(j=0;j<stations[i].tags.length;j++) {
-        contents = '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].tags[j]+'">'+stations[i].name+' </a></li>';
-        if (typeof(rivers[stations[i].river])==='undefined') {
-            rivers[stations[i].river] = contents;
-        } else {
-            rivers[stations[i].river] += contents;
-        }
+        addToRiver(stations[i], '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].tags[j]+'">'+stations[i].name+' </a></li>');
     }
 }
 
-domain='chgalicia';
-request.open("GET", "stations_"+domain+".json", false);
-request.send(null);
-stations=JSON.parse(request.responseText);
+domain = 'chgalicia';
+stations = getStations(domain);
 for(i=0;i<stations.length;i++) {
-    contents = '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].name+' </a></li>';
-    if (typeof(rivers[stations[i].river])==='undefined') {
-        rivers[stations[i].river] = contents;
-    } else {
-        rivers[stations[i].river] += contents;
-    }
+    addToRiver(stations[i], '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].name+' </a></li>');
 }
 
-domain='chj';
-request.open("GET", "stations_"+domain+".json", false);
-request.send(null);
-stations=JSON.parse(request.responseText);
+domain = 'chj';
+stations = getStations(domain);
 for(i=0;i<stations.length;i++) {
-    contents = '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].name+' </a></li>';
-    if (typeof(rivers[stations[i].river])==='undefined') {
-        rivers[stations[i].river] = contents;
-    } else {
-        rivers[stations[i].river] += contents;
-    }
+    addToRiver(stations[i], '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].name+' </a></li>');
 }
 
 var rivers_sorted = Object.keys(rivers);
