@@ -58,8 +58,7 @@ def save_values(domain,station_id,values):
         f.seek(-value_size, os.SEEK_END)
         last_value = struct.unpack(serialisation,f.read(value_size))
         last_datetime = datetime.datetime.fromtimestamp(last_value[0])
-        print 'last from .dat: %s' % last_datetime
-        print 'from http server: %s - %s' % (values[0][0], values[-1][0])
+        print('last from .dat: %s, from http server: %s - %s' % (last_datetime, values[0][0], values[-1][0]))
         # Discard values from scraping that are older than last value from file
         for dt, v in values:
             if last_datetime < dt:
@@ -72,4 +71,3 @@ def save_values(domain,station_id,values):
     buf = ''.join(map(lambda v: struct.pack(serialisation,time.mktime(v[0].timetuple()),v[1]),list(values)[minidx:]))
     f.write(buf)
     f.close()
-

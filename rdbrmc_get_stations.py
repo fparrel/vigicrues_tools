@@ -34,14 +34,14 @@ conv_freqs = {'Toutes les 12 heures':12*60, '3 heures hors crue, 1 heure en crue
 '2 fois par jour en situation normale (5h00 et 17h00)':12*60,
 'Toutes les 5 min pour les hauteurs et les débits, toutes les heures pour la pluie':5, '2 fois par jour (6h et 18h).':12*60}
 
-def get_stations():
+def getStations():
     url = "http://www.rdbrmc.com/hydroreel2/listestation.php"
     soup = BeautifulSoup(urllib2.urlopen(url), "lxml")
     prefix = 'station.php?codestation='
     for type in ('LIMNI','PLUVIO'):
         tbl = soup.find('a',attrs={'name':type}).find_parent().find_parent()
         links1 = [link.get('href') for link in tbl.find_all('a')]
-        links = filter(lambda l: not(l is None), links1)
+        links = list(filter(lambda l: not(l is None), links1))
         names = [cell.get_text() for cell in tbl.find_all('td')]
         assert(len(links)*3==len(names))
         assert(links[0].startswith(prefix))
@@ -56,16 +56,19 @@ def get_stations():
             id = int(links[i/3][len(prefix):])
             yield(id,station,river,type,freq_str,freq_min)
 
-def prinf_freqs():
+def printFreqs():
+    # Used to generate the `conv_freqs` dict
     freqs = set([])
-    for id,station,river,type,freq_str,freq_min in get_stations():
-        #print id,station,river,type,freq_str,freq_min
-        freqs.add(freq)
-    print freqs
+    for id,station,river,type,freq_str,freq_min in getStations():
+        freqs.add(freq_str)
+    print(freqs)
 
-stations = []
-for id,station,river,type,freq_str,freq_min in get_stations():
-    stations.append({'id':id,'name':station,'river':river,'type':type,'freq':freq_min})
+def main():
+    stations = []
+    for id,station,river,type,freq_str,freq_min in getStations():
+        stations.append({'id':id,'name':station,'river':river,'type':type,'freq':freq_min})
 
-json.dump(stations,open('stations_rdbrmc.json','w'))
+    json.dump(stations,open('stations_rdbrmc.json','w'))
 
+if __name__=='__main__':
+    main()

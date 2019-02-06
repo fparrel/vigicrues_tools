@@ -28,7 +28,7 @@ def main():
     t = r.text.encode(r.encoding)
     bassins = map(lambda hrefurl: int(hrefurl[len(BASSINPREFIX):]),list(set(parse_page(t,BASSINPREFIX))))
     for bassin in bassins:
-        print 'Bassin %s' % bassin
+        print('Bassin %s' % bassin)
         r = requests.get('http://www.vigicrues.gouv.fr/niv2-bassin.php?CdEntVigiCru=%s'%bassin)
         t = r.text.encode(r.encoding)
         all_stations += list(map(extract_stationid,parse_page(t,STATIONPREFIX)))
@@ -41,4 +41,3 @@ def main():
 
 if __name__=='__main__':
     main()
-
