@@ -3,6 +3,7 @@
 import requests
 from lxml import etree
 import json
+import re
 try:
     from urllib.parse import urlparse
     from urllib.parse import parse_qs
@@ -46,6 +47,14 @@ def getFlow4Level(url):
             flow4level[float(level.strip(' m'))] = float(flow.strip(' m'))
     return flow4level
 
+findgeo = re.compile(r'var\s+myCenter\s*=\s*new\s+google.maps.LatLng\((-?\d+.\d+),\s*(-?\d+.\d+)\);')
+
+def getGeo(station_id):
+    url = 'https://www.chcantabrico.es/sistema-automatico-de-informacion-detalle-estacion?cod_estacion=%s' % station_id
+    r = requests.get(url)
+    html = r.text.encode(r.encoding)
+    found = findgeo.findall(html)
+    return map(float,found[0])
 
 def getStations():
     r = requests.get("https://www.chcantabrico.es/web/guest/caudal-circulante")
@@ -65,7 +74,9 @@ def getStations():
         url = a.get('href')
         station_id2 = parse_qs(urlparse(url).query)['cod_estacion'][0]
         flow4level = getFlow4Level(url)
-        station = {'id':station_id2,'river':river,'name':station_name,'url':url,'flow4level':flow4level}
+        lat, lon = getGeo(station_id2)
+        station = {'id':station_id2,'river':river,'name':station_name,'url':url,'flow4level':flow4level,'lat':lat,\
+          'lon':lon,'url_scrap':'https://www.chcantabrico.es/evolucion-de-niveles/-/descarga/csv/nivel/%s'%station_id2}
         print station
         yield station
 
@@ -74,3 +85,4 @@ def main():
 
 if __name__=='__main__':
     main()
+

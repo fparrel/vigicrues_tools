@@ -63,7 +63,7 @@ def main():
     name = ' '.join(t.replace('&nbsp;',' ').split()[1:])
     desc,h,x,y,z,river,tag = parseStation(getStationDataHtml(station_id))
     lat,lon = utm.to_latlon(x,y,h,'T')
-    stations.append({'id':station_id,'tag':tag,'zone':zone,'type':station_type,'name':name,'desc':desc,'utmx':x,'utmy':y,'alt':z,'river':river,'lat':lat,'lon':lon})
+    stations.append({'id':station_id,'tag':tag,'zone':zone,'type':station_type,'name':name,'desc':desc,'utm_x':x,'utm_y':y,'alt':z,'river':river,'lat':lat,'lon':lon})
   json.dump(stations,open('stations_chebro.json','w'))
 
 if __name__=='__main__':
