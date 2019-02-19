@@ -98,6 +98,28 @@ for(i=0;i<stations.length;i++) {
     addToRiver(stations[i], '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].name+' </a></li>');
 }
 
+
+domain = 'chguadalquivir';
+stations = getStations(domain);
+for(i=0;i<stations.length;i++) {
+    addToRiver(stations[i], '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].desc+' </a></li>');
+}
+
+domain = 'gencat';
+stations = getStations(domain);
+for(i=0;i<stations.length;i++) {
+    addToRiver(stations[i], '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].net+stations[i].id+'-'+stations[i].ids+'">'+stations[i].name+' </a></li>');
+}
+
+domain = 'hidrosur';
+stations = getStations(domain);
+for(i=0;i<stations.length;i++) {
+    var j;
+    for(j=0;i<stations[i].measures;j++) {
+        addToRiver(stations[i], '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].measures[j].id+'">'+stations[i].name+': '+stations[i].measures[j].name+' </a></li>');
+    }
+}
+
 var rivers_sorted = Object.keys(rivers);
 rivers_sorted.sort(function (a, b) {
     return a.toLowerCase().localeCompare(b.toLowerCase());
