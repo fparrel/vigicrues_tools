@@ -69,8 +69,7 @@ def save_values(domain,station_id,values):
     f.close()
 
 def check_data(domain,station_id):
-    fname = 'data/%s/%s.dat' % (domain, station_id)
-    f = open(fname, 'r')
+    f = open('data/%s/%s.dat' % (domain, station_id), 'r')
     # check that we have t in growing order
     t_prev = 0
     min_v = None
@@ -82,7 +81,6 @@ def check_data(domain,station_id):
             break
         t, v = struct.unpack(serialisation,r)
         if t < t_prev:
-            print t,t_prev
             f.close()
             return False, min_v, max_v
         if min_v==None or min_v>v:
