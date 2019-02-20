@@ -4,6 +4,7 @@
 import urllib2
 from bs4 import BeautifulSoup # `pip install beautifulsoup4` or `apt install python-bs4`
 import json
+from sandre import getLatLonFromSandreId
 
 conv_freqs = {'Toutes les 12 heures':12*60, '3 heures hors crue, 1 heure en crue':60, 'trois fois par jour':4*60,
 'Toutes les 12h, Horaire en crues':12*60, 'Toutes les heures':60, '12  heures hors crue ;1 heure en crue':60,
@@ -34,6 +35,16 @@ conv_freqs = {'Toutes les 12 heures':12*60, '3 heures hors crue, 1 heure en crue
 '2 fois par jour en situation normale (5h00 et 17h00)':12*60,
 'Toutes les 5 min pour les hauteurs et les débits, toutes les heures pour la pluie':5, '2 fois par jour (6h et 18h).':12*60}
 
+def getSandreId(codestation):
+    url = 'http://www.rdbrmc.com/hydroreel2/station.php?codestation=%s'%codestation
+    soup = BeautifulSoup(urllib2.urlopen(url), "lxml")
+    links = filter(lambda link: link!=None and link.get('href')!=None and link.get('href').startswith('http://www.hydro.eaufrance.fr/stations/'),soup.find_all('a'))
+    if len(links)<1:
+        return None
+    print links[0].get('href')
+    sandre_id = links[0].get('href').split('/')[-1]
+    return sandre_id
+
 def getStations():
     url = "http://www.rdbrmc.com/hydroreel2/listestation.php"
     soup = BeautifulSoup(urllib2.urlopen(url), "lxml")
@@ -54,7 +65,15 @@ def getStations():
             else:
                 freq_min = -1
             id = int(links[i/3][len(prefix):])
-            yield(id,station,river,type,freq_str,freq_min)
+            station = {'id':id,'name':station,'river':river,'type':type,'freq':freq_min}
+            sandre_id = getSandreId(id)
+            if sandre_id!=None:
+                station['sandre_id'] = sandre_id
+            lat, lon = getLatLonFromSandreId(sandre_id)
+            if lat!=None and lon!=None:
+                station['lat'] = lat
+                station['lon'] = lon
+            yield station
 
 def printFreqs():
     # Used to generate the `conv_freqs` dict
@@ -65,10 +84,11 @@ def printFreqs():
 
 def main():
     stations = []
-    for id,station,river,type,freq_str,freq_min in getStations():
-        stations.append({'id':id,'name':station,'river':river,'type':type,'freq':freq_min})
+    for station in getStations():
+        stations.append(station)
 
     json.dump(stations,open('stations_rdbrmc.json','w'))
 
 if __name__=='__main__':
     main()
+
