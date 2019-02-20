@@ -10,11 +10,11 @@ def mkdirp(path):
     except:
         pass
 
-def get_lastupdatetime(domain,station_id):
+# So here is how we will serialize: an unsigned integer representing the timestamp, and a float representing the value
+serialisation = '<Lf'
+value_size = struct.calcsize(serialisation)
 
-    # So here is how we will serialize: an unsigned integer representing the timestamp, and a float representing the value
-    serialisation = '<Lf'
-    value_size = struct.calcsize(serialisation)
+def get_lastupdatetime(domain,station_id):
 
     # Open the file for appending, create new file is needed. 'b' (binary) flag is needed on windows
     try:
@@ -39,10 +39,6 @@ def get_lastupdatetime(domain,station_id):
 
 def save_values(domain,station_id,values):
     # Be low tech: I could have put the data in a db like MongoDB. But this code lead to the minimal disk access needed
-
-    # So here is how we will serialize: an unsigned integer representing the timestamp, and a float representing the value
-    serialisation = '<Lf'
-    value_size = struct.calcsize(serialisation)
 
     # Open the file for appending, create new file is needed. 'b' (binary) flag is needed on windows
     mkdirp('data/%s' % (domain))
@@ -71,3 +67,48 @@ def save_values(domain,station_id,values):
     buf = ''.join(map(lambda v: struct.pack(serialisation,time.mktime(v[0].timetuple()),v[1]),list(values)[minidx:]))
     f.write(buf)
     f.close()
+
+def check_data(domain,station_id):
+    fname = 'data/%s/%s.dat' % (domain, station_id)
+    f = open(fname, 'r')
+    # check that we have t in growing order
+    t_prev = 0
+    min_v = None
+    max_v = None
+    while True:
+        r = f.read(value_size)
+        if len(r)<value_size:
+            # end of file
+            break
+        t, v = struct.unpack(serialisation,r)
+        if t < t_prev:
+            print t,t_prev
+            f.close()
+            return False, min_v, max_v
+        if min_v==None or min_v>v:
+            min_v = v
+        if max_v==None or max_v<v:
+            max_v = v
+        t_prev = t
+    f.close()
+    return True, min_v, max_v
+
+def repair_data(domain,station_id):
+    fname = 'data/%s/%s.dat' % (domain, station_id)
+    f = open(fname, 'r')
+    values = []
+    while True:
+        r = f.read(value_size)
+        if len(r)<value_size:
+            # end of file
+            break
+        values.append(struct.unpack(serialisation,r))
+    if domain=='chgalicia':
+	print len(values)
+        values = filter(lambda tv:tv[1]!=-9999.0, values) # Filter undef
+        print len(values)
+    values.sort(key=lambda tv:tv[0])
+    f = open(fname, 'w')
+    f.write(''.join([struct.pack(serialisation,tv[0],tv[1]) for tv in values]))
+    f.close()
+

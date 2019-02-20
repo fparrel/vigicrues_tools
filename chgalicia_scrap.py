@@ -2,9 +2,9 @@
 
 import requests
 import datetime
-from lxml import etree
 import json
 from serialize import save_values
+import re
 
 def loadStations():
     f = open('stations_chgalicia.json','r')
@@ -12,24 +12,26 @@ def loadStations():
     f.close()
     return stations
 
+chgalicia_pat = re.compile(r'\s*[0-9]\s*([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2})\s+Caudal Medio da Auga \(m3/s\)\s+([0-9,]+)')
+
+def parseValue(txt):
+    return datetime.datetime.strptime(txt[0],'%Y-%m-%d %H:%M:%S'), float(txt[1].replace(',','.'))
+
 def main():
     stations = loadStations()
     for station in stations:
         date1 = datetime.datetime.strftime(datetime.datetime.now()-datetime.timedelta(days=1),'%d/%m/%Y')
         date2 = datetime.datetime.strftime(datetime.datetime.now()-datetime.timedelta(days=-1),'%d/%m/%Y')
-        url = 'http://www2.meteogalicia.es/servizos/AugasdeGalicia/DatosHistoricosTaboas_dezminutal.asp?est=%(id)s&param=101&data1=%(date1)s&data2=%(date2)s'%{'id':station['id'],'date1':date1,'date2':date2}
-        print(url)
+        url = 'http://www2.meteogalicia.es/servizos/AugasdeGalicia/contidos/historicos_descarga.asp?Nest=%s&param=%s&periodo=1&data1=%s&data2=%s&formato=1' % (station['id'], station['param'], date1, date2)
+        print url
         r = requests.get(url)
-        html = r.text.encode(r.encoding)
-        t = etree.HTML(html)
-        values = []
-        for tr in t.xpath('//table[@class="datos"]/tr'):
-            de,ke,ve = tr.xpath('th/span')
-            d = datetime.datetime.strptime(de.text.strip(),'%Y-%m-%d %H:%M:%S')
-            v = float(ve.text.replace(',','.'))
-            values.append((d,v))
+        txt = r.text.encode(r.encoding)
+        values_text = chgalicia_pat.findall(txt)
+        values = filter(lambda tv:tv[1]!=-9999.0,map(parseValue,values_text))
+        print len(values)
         if len(values)>0:
             save_values('chgalicia',station['id'],values)
 
 if __name__=='__main__':
     main()
+
