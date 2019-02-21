@@ -4,16 +4,10 @@ import json
 import requests
 from lxml import etree
 import datetime
-from serialize import save_values
-
-def loadStations():
-    f = open('stations_chmino.json','r')
-    stations = json.load(f)
-    f.close()
-    return stations
+from serialize import saveValues, loadStations
 
 def main():
-    for station in loadStations():
+    for station in loadStations('chmino'):
         print(station['id'])
         for tag in station['tags']:
             url = 'http://saih.chminosil.es/index.php?url=/datos/graficas_numeros/tag:%s&historia=0'%tag
@@ -34,7 +28,8 @@ def main():
                 values.append((d,v))
             if len(values)>0:
                 values.sort(key=lambda dv:dv[0])
-                save_values('chmino','%s'%tag,values)
+                saveValues('chmino','%s'%tag,values)
 
 if __name__=='__main__':
     main()
+

@@ -3,6 +3,7 @@ import struct
 import datetime
 import os
 import time
+import json
 
 def mkdirp(path):
     try:
@@ -14,7 +15,7 @@ def mkdirp(path):
 serialisation = '<Lf'
 value_size = struct.calcsize(serialisation)
 
-def get_lastupdatetime(domain,station_id):
+def getLastUpdateTime(domain,station_id):
 
     # Open the file for appending, create new file is needed. 'b' (binary) flag is needed on windows
     try:
@@ -37,7 +38,7 @@ def get_lastupdatetime(domain,station_id):
     #return datetime.datetime.fromtimestamp(0)
     return None
 
-def save_values(domain,station_id,values):
+def saveValues(domain,station_id,values):
     # Be low tech: I could have put the data in a db like MongoDB. But this code lead to the minimal disk access needed
 
     # Open the file for appending, create new file is needed. 'b' (binary) flag is needed on windows
@@ -68,7 +69,7 @@ def save_values(domain,station_id,values):
     f.write(buf)
     f.close()
 
-def check_data(domain,station_id):
+def checkData(domain,station_id):
     f = open('data/%s/%s.dat' % (domain, station_id), 'r')
     # check that we have t in growing order
     t_prev = 0
@@ -91,7 +92,7 @@ def check_data(domain,station_id):
     f.close()
     return True, min_v, max_v
 
-def repair_data(domain,station_id):
+def repairData(domain,station_id):
     fname = 'data/%s/%s.dat' % (domain, station_id)
     f = open(fname, 'r')
     values = []
@@ -109,4 +110,10 @@ def repair_data(domain,station_id):
     f = open(fname, 'w')
     f.write(''.join([struct.pack(serialisation,tv[0],tv[1]) for tv in values]))
     f.close()
+
+def loadStations(domain):
+    f = open('stations_%s.json'%domain, 'r')
+    stations = json.load(f)
+    f.close()
+    return stations
 

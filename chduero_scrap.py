@@ -3,7 +3,8 @@
 import requests
 import datetime
 import json
-from serialize import save_values, get_lastupdatetime
+from serialize import saveValues, loadStations
+from lxml import etree
 
 def parsePoint(p):
     try:
@@ -17,47 +18,27 @@ def parsePoint(p):
         print('Could not parse: "%s"' % p)
     return None
 
-def getData(station_id):
-    r = requests.get('http://www.saihduero.es/ficha-risr?r=%s' % station_id)
-    t = r.text.encode(r.encoding)
-    i = t.find('<td>Caudal</td>')
-    i = t.find('href=',i)
-    j = t.find('"',i+6)
-    direct_url = 'http://www.saihduero.es/%s' % t[i+6:j]
+def getData(direct_url):
+    print(direct_url)
     r = requests.get(direct_url)
     t = r.text.encode(r.encoding)
     i = t.find('chartData =')
     i = t.find('{',i)
     j = t.find('];',i)
     d = t[i:j]
-    return filter(lambda x: x!=None, map(parsePoint, d.split('},\n'))), direct_url
+    return filter(lambda x: x!=None, map(parsePoint, d.split('},\n')))
 
-def process(station_id):
-    values_gen, direct_url = getData(station_id)
-    values = list(values_gen)
+def process(station):
+    direct_url = station['direct_url']
+    values = list(getData(direct_url))
     if len(values) > 0:
-        save_values('chduero', station_id, values)
-    return direct_url
-
-def loadStations():
-    f = open('stations_chduero.json','r')
-    stations = json.load(f)
-    f.close()
-    return stations
+        saveValues('chduero', station['senal_id'], values)
 
 def main():
-    stations = loadStations()
+    stations = loadStations('chduero')
     for station in stations:
-        print station['station'].encode('utf8')
-        direct_url = process(station['id'])
-        if station.has_key('direct_url'):
-            if station['direct_url'] != direct_url:
-                print('Warning: direct_url different!')
-        else:
-            station['direct_url'] = direct_url
-    f = open('stations_chduero.json','w')
-    json.dump(stations, f)
-    f.close()
+        print('%s %s' % (station['name'].encode('utf8'),station['desc'].encode('utf8')))
+        process(station)
 
 if __name__=='__main__':
     main()

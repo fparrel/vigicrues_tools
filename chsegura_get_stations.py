@@ -15,7 +15,7 @@ puntos2 = map(lambda s:s[0],filter(lambda s:len(s)>0,map(lambda s:findstations.f
 #puntos2 = map(lambda s:findstations.findall(s),tree.xpath('//div[@class="cauce_mapa_container"]/@title'))
 #puntos2 = [item for sublist in puntos2 for item in sublist]
 puntos2 = list(set(puntos2))
-print puntos2
+print(puntos2)
 #exit()
 
 stations = []
@@ -58,7 +58,7 @@ for zona in ['I','II','III','IV','V','VI','VII','VIII']:
             if p.startswith(punto):
                 puntos2_of_station.append(p)
         station = {'id': punto, 'name': name, 'utm_h': huso, 'utm_x': x, 'utm_y': y, 'alt': z, 'river': river, 'lat': lat, 'lon':   lon  , 'ids': puntos2_of_station}
-        print station
+        print(station)
         if len(puntos2_of_station)>0:
             stations.append(station)
 

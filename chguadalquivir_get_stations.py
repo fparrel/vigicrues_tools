@@ -6,7 +6,7 @@ import json
 
 def getHistXml(station_id,nb,letter):
     url = 'http://www.chguadalquivir.es/saih/saihhist2.aspx?s1=%s_%d%s&dia=1'%(station_id,nb,letter)
-    print url
+    print(url)
     r = requests.get(url)
     return etree.XML(r.text.encode(r.encoding))
   
@@ -83,7 +83,7 @@ def main():
                       'url':'http://www.chguadalquivir.es/saih/saihhist2.aspx?s1=%s_%d%s&dia=1'%(station_id,nb,letter)}
             #print station
             stations.append(station)
-    print len(stations)
+    print('Found %d stations'%len(stations))
     f = open('stations_chguadalquivir.json','w')
     json.dump(stations,f)
     f.close()
