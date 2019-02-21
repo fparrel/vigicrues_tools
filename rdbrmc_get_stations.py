@@ -37,16 +37,17 @@ conv_freqs = {'Toutes les 12 heures':12*60, '3 heures hors crue, 1 heure en crue
 
 def getSandreId(codestation):
     url = 'http://www.rdbrmc.com/hydroreel2/station.php?codestation=%s'%codestation
+    print(url)
     soup = BeautifulSoup(urllib2.urlopen(url), "lxml")
     links = filter(lambda link: link!=None and link.get('href')!=None and link.get('href').startswith('http://www.hydro.eaufrance.fr/stations/'),soup.find_all('a'))
     if len(links)<1:
         return None
-    print links[0].get('href')
     sandre_id = links[0].get('href').split('/')[-1]
     return sandre_id
 
 def getStations():
     url = "http://www.rdbrmc.com/hydroreel2/listestation.php"
+    print(url)
     soup = BeautifulSoup(urllib2.urlopen(url), "lxml")
     prefix = 'station.php?codestation='
     for type in ('LIMNI','PLUVIO'):
@@ -78,7 +79,7 @@ def getStations():
 def printFreqs():
     # Used to generate the `conv_freqs` dict
     freqs = set([])
-    for id,station,river,type,freq_str,freq_min in getStations():
+    for station_id,station,river,station_type,freq_str,freq_min in getStations():
         freqs.add(freq_str)
     print(freqs)
 

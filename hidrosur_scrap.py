@@ -5,17 +5,11 @@ import json
 import requests
 import demjson
 import datetime
-from serialize import save_values
-
-def loadStations():
-    f = open('stations_hidrosur.json','r')
-    stations = json.load(f)
-    f.close()
-    return stations
+from serialize import saveValues, loadStations
 
 def process(measure):
     url = 'http://www.redhidrosurmedioambiente.es/saih/mapa/tiempo/real/grafica/%s'%measure['id']
-    print url
+    print(url)
     r = requests.get(url)
     html = r.text.encode(r.encoding)
     i = html.find('var lineChartData = {')
@@ -38,10 +32,10 @@ def process(measure):
                 break
     values = zip(ts,vs)
     if len(values)>0:
-        save_values('hidrosur',measure['id'],values)
+        saveValues('hidrosur',measure['id'],values)
 
 def main():
-    stations = loadStations()
+    stations = loadStations('hidrosur')
     for station in stations:
         for measure in station['measures']:
             process(measure)

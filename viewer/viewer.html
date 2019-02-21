@@ -23,47 +23,50 @@ xhr.send(null);
 
 xhr.onload = function(oEvent) {
 
-  var arrayBuffer = xhr.response;
-  var dv = new DataView(arrayBuffer);
-  var i;
-  var data=[];
-  for(i=0;i<arrayBuffer.byteLength;i+=8) {
-    data.push({x:dv.getUint32(i,true)*1000,y:dv.getFloat32(i+4,true)});
-  }
-  // cf. ../serialize.py : little endian: uint32 timestamp in seconds + float32
+  if (xhr.status==200) {
+    var arrayBuffer = xhr.response;
+    var dv = new DataView(arrayBuffer);
+    var i;
+    var data=[];
+    for(i=0;i<arrayBuffer.byteLength;i+=8) {
+      data.push({x:dv.getUint32(i,true)*1000,y:dv.getFloat32(i+4,true)});
+    }
+    // cf. ../serialize.py : little endian: uint32 timestamp in seconds + float32
 
 
-  dataset = [{key:'data',values:data}];
+    dataset = [{key:'data',values:data}];
 
-  nv.addGraph(function() {
-    var chart = nv.models.lineWithFocusChart();
+    nv.addGraph(function() {
+      var chart = nv.models.lineWithFocusChart();
 
-    chart.xAxis
+      chart.xAxis
         .tickFormat(function(d) { 
           return d3.time.format('%Y/%m/%d %Hh')(new Date(d)) 
-    });
+      });
 
-    chart.x2Axis
+      chart.x2Axis
 	.tickFormat(function(d) {
           return d3.time.format('%Y/%m')(new Date(d))
-    });
+      });
 
-    chart.yAxis
+      chart.yAxis
         .tickFormat(d3.format(',.2f'));
 
-    chart.y2Axis
+      chart.y2Axis
         .tickFormat(d3.format(',.2f'));
 
-    d3.select('#chart svg')
+      d3.select('#chart svg')
         .datum(dataset)
 //        .transition().duration(500)
         .call(chart);  
 
-    nv.utils.windowResize(chart.update);
+      nv.utils.windowResize(chart.update);
 
-    return chart;
-  });
-
+      return chart;
+    });
+  } else {
+    d3.select('#chart').html('Error 404: no data');
+  }
 }
 
 </script>

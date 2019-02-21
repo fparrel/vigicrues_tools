@@ -4,13 +4,7 @@ import json
 import requests
 from lxml import etree
 import datetime
-from serialize import save_values
-
-def loadStations():
-    f = open('stations_chguadiana.json', 'r')
-    stations = json.load(f)
-    f.close()
-    return stations
+from serialize import saveValues, loadStations
 
 def getData(station):
     r = requests.get(station['url'])
@@ -32,12 +26,13 @@ def getData(station):
             columns = map(lambda th:th.text,ths)
 
 def main():
-    for station in loadStations():
+    for station in loadStations('chguadiana'):
         print(station['id'])
         values = list(getData(station))
         if len(values)>0:
-            values.sort(key=lambda x:x[0]) # values must be sorted for save_values algorithm
-            save_values('chguadiana','%(type)s_%(id)s'%station,values)
+            values.sort(key=lambda x:x[0]) # values must be sorted for saveValues algorithm
+            saveValues('chguadiana','%(type)s_%(id)s'%station,values)
 
 if __name__=='__main__':
     main()
+

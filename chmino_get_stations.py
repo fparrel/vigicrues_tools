@@ -6,7 +6,6 @@ from lxml import etree
 import re
 import utm
 import json
-from serialize import save_values
 
 def main():
     r = requests.get('http://saih.chminosil.es/index.php?url=/datos/mapas/mapa:H1/area:HID/acc:',cookies={'lang':'es'})
@@ -46,3 +45,4 @@ def main():
 
 if __name__=='__main__':
     main()
+
