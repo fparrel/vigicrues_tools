@@ -166,7 +166,7 @@ for(i=0;i<stations.length;i++) {
 domain = 'chguadalquivir';
 stations = getStations(domain);
 for(i=0;i<stations.length;i++) {
-    addStation(stations[i], domain, '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].desc+' </a></li>');
+    addStation(stations[i], domain, '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].desc+' ('+stations[i].unit+')</a></li>');
 }
 
 domain = 'gencat';

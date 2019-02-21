@@ -41,9 +41,10 @@ def findSenal(station_id):
                 nb_chosen = nb
                 senal_chosen = senal_desc
                 letter_chosen = letter
+                uni = t.find('uni').text
         if letter=='_X' and nb_chosen!=None:
             break
-    return nb_chosen,senal_chosen,letter_chosen,t.find('uni').text
+    return nb_chosen,senal_chosen,letter_chosen,uni
 
 
 def main():
