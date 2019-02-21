@@ -43,7 +43,7 @@ def parseStation(e):
     else:
         river = station_name
     print(m,river)
-    return {'type':t,'station_id':station_id,'name':station_name,'url':url,'river':river}
+    return {'type':t,'id':station_id,'name':station_name,'url':url,'river':river}
 
 def main():
 
