@@ -32,6 +32,7 @@ def process(station):
     direct_url = station['direct_url']
     values = list(getData(direct_url))
     if len(values) > 0:
+        values.sort(key=lambda x:x[0]) # values must be sorted for saveValues algorithm
         saveValues('chduero', station['senal_id'], values)
 
 def main():
