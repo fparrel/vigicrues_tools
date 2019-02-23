@@ -14,6 +14,7 @@ def main():
         r = requests.get(url)
         values = list(filter(lambda dv:dv[1]!=None,map(lambda dv:(datetime.datetime.strptime(dv[0],'%d/%m/%Y %H:%M'),dv[1]),r.json()[1])))
         if len(values)>0:
+            values.sort(key=lambda x:x[0]) # values must be sorted for saveValues algorithm
             saveValues('chj',station['id'],values)
 
 if __name__=='__main__':
