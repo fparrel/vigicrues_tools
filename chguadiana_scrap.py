@@ -7,7 +7,8 @@ import datetime
 from serialize import saveValues, loadStations
 
 def getData(station):
-    r = requests.get(station['url'])
+    url = station['url']
+    r = requests.get(url)
     t = etree.HTML(r.text.encode(r.encoding))
     columns = []
     for tr in t.xpath('//tr'):
@@ -27,11 +28,10 @@ def getData(station):
 
 def main():
     for station in loadStations('chguadiana'):
-        print(station['id'])
         values = list(getData(station))
         if len(values)>0:
             values.sort(key=lambda x:x[0]) # values must be sorted for saveValues algorithm
-            saveValues('chguadiana','%(type)s_%(id)s'%station,values)
+            saveValues('chguadiana','%(type)s_%(station_id)s'%station,values)
 
 if __name__=='__main__':
     main()
