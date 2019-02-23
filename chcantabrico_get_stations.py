@@ -11,6 +11,9 @@ except ImportError:
     from urlparse import urlparse
     from urlparse import parse_qs
 
+# in this C.H., we can get history of water levels in meters, and measure of flow in m3/s, but only a single point. So
+# we save the correpondancy between level and flow in 'flow4level'
+
 def getFlow4Level(url):
     r = requests.get(url)
     t = etree.HTML(r.text.encode(r.encoding))
@@ -76,8 +79,9 @@ def getStations():
         flow4level = getFlow4Level(url)
         lat, lon = getGeo(station_id2)
         station = {'id':station_id2,'river':river,'name':station_name,'url':url,'flow4level':flow4level,'lat':lat,\
-          'lon':lon,'url_scrap':'https://www.chcantabrico.es/evolucion-de-niveles/-/descarga/csv/nivel/%s'%station_id2}
-        print station
+          'lon':lon,'url_scrap':'https://www.chcantabrico.es/evolucion-de-niveles/-/descarga/csv/nivel/%s'%station_id2,\
+          'unit': 'm'}
+        print(station)
         yield station
 
 def main():
