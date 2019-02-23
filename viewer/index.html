@@ -66,6 +66,13 @@ function addStation(station, domain, contents) {
     all_stations.push(new Station(station.river, domain, contents));
 }
 
+function addStationsDefault(domain) {
+    var stations = getStations(domain);
+    for(i=0;i<stations.length;i++) {
+        addStation(stations[i], domain, '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].senal_id+'">'+stations[i].name+' '+stations[i].desc+' ('+stations[i].unit+')</a></li>');
+    }
+}
+
 function refreshDisplay() {
     var v = document.getElementById("search").value;
     html = '<ul>';
@@ -111,17 +118,8 @@ for(i=0;i<stations.length;i++) {
     addStation(stations[i], domain, contents);
 }
 
-domain = 'chtajo';
-stations = getStations(domain);
-for(i=0;i<stations.length;i++) {
-    addStation(stations[i], domain, '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].senal_id+'">'+stations[i].name+' '+stations[i].desc+' ('+stations[i].unit+')</a></li>');
-}
-
-domain = 'chduero';
-stations = getStations(domain);
-for(i=0;i<stations.length;i++) {
-    addStation(stations[i], domain, '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].senal_id+'">'+stations[i].name+' '+stations[i].desc+' ('+stations[i].unit+')</a></li>');
-}
+addStationsDefault('chtajo');
+addStationsDefault('chduero');
 
 domain = 'chebro';
 stations = getStations(domain);
@@ -132,36 +130,23 @@ for(i=0;i<stations.length;i++) {
 domain = 'chguadiana';
 stations = getStations(domain);
 for(i=0;i<stations.length;i++) {
-    addStation(stations[i], domain, '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].type+'_'+stations[i].id+'">'+stations[i].name+' '+stations[i].desc+' '+stations[i].unit+'</a></li>');
+    addStation(stations[i], domain, '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].type+'_'+stations[i].station_id+'">'+stations[i].name+' '+stations[i].desc+' '+stations[i].unit+'</a></li>');
 }
 
 domain = 'chcantabrico';
 stations = getStations(domain);
 for(i=0;i<stations.length;i++) {
-    addStation(stations[i], domain, '<li><a href="viewer.html?domain='+domain+'&station_id=nivel_'+stations[i].id+'">'+stations[i].name+' </a></li>');
+    addStation(stations[i], domain, '<li><a href="viewer.html?domain='+domain+'&station_id=nivel_'+stations[i].id+'">'+stations[i].name+' ('+stations[i].unit+')</a></li>');
 }
 
-domain = 'chmino';
-stations = getStations(domain);
-for(i=0;i<stations.length;i++) {
-    var j;
-    for(j=0;j<stations[i].tags.length;j++) {
-        addStation(stations[i], domain, '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].tags[j]+'">'+stations[i].name+' </a></li>');
-    }
-}
-
-domain = 'chgalicia';
-stations = getStations(domain);
-for(i=0;i<stations.length;i++) {
-    addStation(stations[i], domain, '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].name+' </a></li>');
-}
+addStationsDefault('chmino');
+addStationsDefault('chgalicia');
 
 domain = 'chj';
 stations = getStations(domain);
 for(i=0;i<stations.length;i++) {
-    addStation(stations[i], domain, '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].name+' </a></li>');
+    addStation(stations[i], domain, '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].name+' ('+stations[i].unit+')</a></li>');
 }
-
 
 domain = 'chguadalquivir';
 stations = getStations(domain);
@@ -169,20 +154,8 @@ for(i=0;i<stations.length;i++) {
     addStation(stations[i], domain, '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].id+'">'+stations[i].desc+' ('+stations[i].unit+')</a></li>');
 }
 
-domain = 'gencat';
-stations = getStations(domain);
-for(i=0;i<stations.length;i++) {
-    addStation(stations[i], domain, '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].net+stations[i].id+'-'+stations[i].ids+'">'+stations[i].name+' </a></li>');
-}
-
-domain = 'hidrosur';
-stations = getStations(domain);
-for(i=0;i<stations.length;i++) {
-    var j;
-    for(j=0;j<stations[i].measures.length;j++) {
-        addStation(stations[i], domain, '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].measures[j].id+'">'+stations[i].name+': '+stations[i].measures[j].name+' </a></li>');
-    }
-}
+addStationsDefault('gencat');
+addStationsDefault('hidrosur');
 
 var html='';
 for(i=0;i<domains.length;i++) {
