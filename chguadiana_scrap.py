@@ -8,6 +8,7 @@ from serialize import saveValues, loadStations
 
 def getData(station):
     url = station['url']
+    print(url)
     r = requests.get(url)
     t = etree.HTML(r.text.encode(r.encoding))
     columns = []
