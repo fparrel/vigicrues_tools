@@ -92,6 +92,33 @@ def checkData(domain,station_id):
     f.close()
     return True, min_v, max_v
 
+def comptePointsMatching(domain,station_id,match_func,fullyearonly=False):
+    f = open('data/%s/%s.dat' % (domain, station_id), 'r')
+    if fullyearonly:
+        f.seek(-value_size,os.SEEK_END)
+        t_last, v = struct.unpack(serialisation,f.read(value_size))
+        f.seek(0,os.SEEK_SET)
+    t_prev = None
+    cptr = 0
+    while True:
+        r = f.read(value_size)
+        if len(r)<value_size:
+            # end of file
+            break
+        t, v = struct.unpack(serialisation,r)
+        if t_prev==None:
+            t_prev = t
+            t_first = t
+            if fullyearonly:
+                t_end = t_first + ((t_last - t_first) / (3600*24*356)) * 3600*24*356
+        if fullyearonly and t>=t_end:
+            break
+        if match_func(v):
+            cptr += t - t_prev
+        t_prev = t
+    f.close()
+    return cptr,t-t_first
+
 def repairData(domain,station_id):
     fname = 'data/%s/%s.dat' % (domain, station_id)
     f = open(fname, 'r')
