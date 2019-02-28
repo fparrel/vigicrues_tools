@@ -1,8 +1,21 @@
 #!/usr/bin/env python
 
-from arpapiemonte_get_stations import getData
 from serialize import loadStations, saveValues
 import datetime
+import requests
+import yaml
+
+def getData(url):
+    print(url)
+    r = requests.get(url)
+    t = r.text.encode(r.encoding)
+    i = t.find('data:')
+    if i==-1:
+        raise Exception('Cannot find begin')
+    j = t.find('}',i)
+    if j==-1:
+        raise Exception('Cannot find end')
+    return yaml.load('{'+t[i:j]+'}')
 
 def main():
     stations = loadStations('arpapiemonte')
