@@ -5,6 +5,7 @@ import re
 import yaml
 import json
 import utm
+from riverfromdb import findRiver
 
 def getData(url):
     print(url)
@@ -44,6 +45,9 @@ def main():
                 d = None
             if d!=None:
                 station['desc'] = d['name']
+                river = findRiver(lat, lon)
+                if river!=None:
+                    station['river'] = river
                 stations.append(station)
 
     json.dump(stations,open('stations_arpapiemonte.json','w'))
