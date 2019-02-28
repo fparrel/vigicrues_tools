@@ -157,6 +157,12 @@ for(i=0;i<stations.length;i++) {
 addStationsDefault('gencat');
 addStationsDefault('hidrosur');
 
+domain = 'arpapiemonte';
+stations = getStations(domain);
+for(i=0;i<stations.length;i++) {
+    addStation(stations[i], domain, '<li><a href="viewer.html?domain='+domain+'&station_id='+stations[i].station_id+'">'+stations[i].desc+'</a></li>');
+}
+
 var html='';
 for(i=0;i<domains.length;i++) {
     html += '<input type="checkbox" id="'+domains[i]+'" checked onclick="changeDomains()" ondblclick="onlyOneDomain(\''+domains[i]+'\')">'+domains[i]+'</input>';
