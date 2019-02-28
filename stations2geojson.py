@@ -7,6 +7,12 @@ def add_field(d,f,v):
   d[f] = v
   return d
 
+def getName(station):
+  if station.has_key('name'):
+     return station['name']
+  elif station.has_key('id'):
+    return station['id']
+
 def main():
   # Parse all stations
   geos = []
@@ -16,7 +22,7 @@ def main():
     # Parse json file, add domain to all stations, and add it to all stations list
     new_stations = map(lambda x:add_field(x,'domain',domain),json.load(open(fname,'r')))
     # Filter the stations with (lng, lat), and format it into geojson format
-    new_geos = map(lambda station: { "type": "Feature", "geometry": { "type": "Point", "coordinates": [station['lon'],station['lat']] }, "properties": {"name":station["id"],"domain":station["domain"]}}, filter(lambda station:station.has_key('lat') and (station.has_key('lng') or station.has_key('lon')),new_stations))
+    new_geos = map(lambda station: { "type": "Feature", "geometry": { "type": "Point", "coordinates": [station['lon'],station['lat']] }, "properties": {"name":getName(station),"domain":station["domain"]}}, filter(lambda station:station.has_key('lat') and (station.has_key('lng') or station.has_key('lon')),new_stations))
     print('Loading %s, %d stations, %d geos'%(fname,len(new_stations),len(new_geos)))
     geos.extend(new_geos)
 
