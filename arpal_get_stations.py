@@ -9,41 +9,53 @@ import re
 
 pat_stationid = re.compile(r'.*\[(.*)\]')
 
-def get_all_stations():
-    r = requests.get('http://93-62-155-214.ip23.fastwebnet.it/~omirl/WEB/NewIdro/idrometri.html')
+def getGeos():
+    url = 'http://93.62.155.214/~omirl/WEB/omirl.xml'
+    print(url)
+    r = requests.get(url)
+    t = etree.XML(r.text.encode(r.encoding))
+    geos = {}
+    for marker in t:
+        geos[marker.attrib['code']] = marker.attrib
+    return geos
+
+def listStations():
+    url = 'http://93-62-155-214.ip23.fastwebnet.it/~omirl/WEB/NewIdro/idrometri.html'
+    print(url)
+    r = requests.get(url)
     html = r.text.encode(r.encoding)
     t = etree.HTML(html)
-    stations = {}
     for tr in t.xpath('//td/a/parent::td/parent::tr'):
         name = tr.xpath('td/a/text()')[0]
+        code1 = pat_stationid.findall(name)[0]
+        code2 = tr.xpath('td/a/@href')[0].lstrip("javascript:aprigrafico('").rstrip("');")
         empty,Localitai,Provincia,Comune,Bacino,Corso,massimo24Hm,OraUTCmassimo,ValoreOraDiRifm,OraDiRif,Tendenza=tr.xpath('td/text()')
-        station_id = pat_stationid.findall(name)[0]
-        stations[station_id] = {'name':name,'river':Corso,'station_id':station_id}
+        yield name,code1,code2,Corso,ValoreOraDiRifm,OraDiRif
+
+def getAllStations():
+    geos = getGeos()
+    stations = {}
+    for name,code1,code2,river,value,when in listStations():
+        geo = geos[code2]
+        stations[code2] = {'name':name,'river':river.strip(),'station_id':code1,'senal_id':code2,'alt':int(geo['elev']),'lat':float(geo['lat']),'lon':float(geo['lon'])}
     stations = list(stations.itervalues())
     json.dump(stations,open('stations_arpal.json', 'w'))
 
 def scrap():
-    r = requests.get('http://93-62-155-214.ip23.fastwebnet.it/~omirl/WEB/NewIdro/idrometri.html')
-    html = r.text.encode(r.encoding)
-    t = etree.HTML(html)
     already_done = []
-    for tr in t.xpath('//td/a/parent::td/parent::tr'):
-        name = tr.xpath('td/a/text()')[0]
-        station_id = pat_stationid.findall(name)[0]
-        empty,Localitai,Provincia,Comune,Bacino,Corso,massimo24Hm,OraUTCmassimo,ValoreOraDiRifm,OraDiRif,Tendenza=tr.xpath('td/text()')
-        if ValoreOraDiRifm.strip()=='--':
+    for name,code1,code2,river,value,when in listStations():
+        if value.strip()=='--':
             continue
-        if station_id in already_done:
+        if code2 in already_done:
             continue
-        already_done.append(station_id)
-        value = float(ValoreOraDiRifm)
-        when = datetime.datetime.strptime(OraDiRif,'%d/%m/%Y %H:%M')
-        print station_id
-        saveValues('arpal',station_id,[(when,value)])
+        already_done.append(code2)
+        value = float(value)
+        when = datetime.datetime.strptime(when,'%d/%m/%Y %H:%M')
+        print(code2)
+        saveValues('arpal',code1,[(when,value)])
 
 def main():
-    get_all_stations()
-    #scrap()
+    getAllStations()
 
 if __name__=='__main__':
     main()
