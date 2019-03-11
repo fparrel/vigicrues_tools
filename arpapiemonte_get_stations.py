@@ -2,22 +2,10 @@
 
 import requests
 import re
-import yaml
 import json
 import utm
 from riverfromdb import findRiver
-
-def getData(url):
-    print(url)
-    r = requests.get(url)
-    t = r.text.encode(r.encoding)
-    i = t.find('data:')
-    if i==-1:
-        raise Exception('Cannot find begin')
-    j = t.find('}',i)
-    if j==-1:
-        raise Exception('Cannot find end')
-    return yaml.load('{'+t[i:j]+'}')
+from arpapiemonte_scrap import getData
 
 def main():
     url = 'http://www.arpa.piemonte.it/rischinaturali/tematismi/meteo/osservazioni/rete-meteoidrografica/rete-meteo-idrografica.html'
