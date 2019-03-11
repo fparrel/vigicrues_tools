@@ -20,18 +20,22 @@ def get_all_stations():
         station_id = pat_stationid.findall(name)[0]
         stations[station_id] = {'name':name,'river':Corso,'station_id':station_id}
     stations = list(stations.itervalues())
-    json.dumps(stations,open('stations_arpal.json', 'w'))
+    json.dump(stations,open('stations_arpal.json', 'w'))
 
 def scrap():
     r = requests.get('http://93-62-155-214.ip23.fastwebnet.it/~omirl/WEB/NewIdro/idrometri.html')
     html = r.text.encode(r.encoding)
     t = etree.HTML(html)
+    already_done = []
     for tr in t.xpath('//td/a/parent::td/parent::tr'):
         name = tr.xpath('td/a/text()')[0]
         station_id = pat_stationid.findall(name)[0]
         empty,Localitai,Provincia,Comune,Bacino,Corso,massimo24Hm,OraUTCmassimo,ValoreOraDiRifm,OraDiRif,Tendenza=tr.xpath('td/text()')
         if ValoreOraDiRifm.strip()=='--':
             continue
+        if station_id in already_done:
+            continue
+        already_done.append(station_id)
         value = float(ValoreOraDiRifm)
         when = datetime.datetime.strptime(OraDiRif,'%d/%m/%Y %H:%M')
         print station_id
@@ -39,7 +43,7 @@ def scrap():
 
 def main():
     get_all_stations()
-    scrap()
+    #scrap()
 
 if __name__=='__main__':
     main()
