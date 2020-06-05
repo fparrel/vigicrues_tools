@@ -1,10 +1,13 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>River flow visualizer</title>
+  <title>River flow visualizer v2</title>
   <link href="nv.d3.css" rel="stylesheet">
   <script src="d3.v3.min.js"></script>
   <script src="nv.d3.min.js"></script>
+  <script src="lz4.min.js"></script>
+  <script src="buffer.min.js"></script>
+  <script src="require.js"></script>
 </head>
 <body>
 <div id='chart'>
@@ -17,15 +20,23 @@ var station_id = req[2];
 var domain = req[1];
 
 var xhr = new XMLHttpRequest();
-xhr.open('GET', 'data/'+domain+'/'+station_id+'.dat', true);
+xhr.open('GET', 'data/'+domain+'/'+station_id+'.dat.lz4', true);
 xhr.responseType = 'arraybuffer';
 xhr.send(null);
+
+var Buffer = require('buffer').Buffer;
+var LZ4 = require('lz4');
 
 xhr.onload = function(oEvent) {
 
   if (xhr.status==200) {
     var arrayBuffer = xhr.response;
-    var dv = new DataView(arrayBuffer);
+    var compBuffer = new Buffer(xhr.response);
+    var uncompressedSize = arrayBuffer.byteLength * 3;
+    var uncompressedBuffer = new Uint8Array(uncompressedSize);
+    var outsize = LZ4.decodeBlock(compBuffer, uncompressedBuffer, 4+7, arrayBuffer.byteLength - 8);
+    var uncompressedData = uncompressedBuffer.slice(0, outsize).buffer;
+    var dv = new DataView(uncompressedData);
     var i;
     var data=[];
     for(i=0;i<arrayBuffer.byteLength;i+=8) {
